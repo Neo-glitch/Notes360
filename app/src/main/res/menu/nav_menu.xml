@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- This item here is used to serve as a group-->
+    <item android:title="General">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/home"
+                    android:icon="@drawable/ic_baseline_home_24"
+                    android:title="@string/home" />
+                <item
+                    android:id="@+id/uploadNotes"
+                    android:icon="@drawable/ic_baseline_cloud_upload_24"
+                    android:title="@string/upload_notes" />
+                <item
+                    android:id="@+id/downloadNotes"
+                    android:icon="@drawable/ic_baseline_cloud_download_24"
+                    android:title="@string/download_notes" />
+            </group>
+        </menu>
+    </item>
+    <item android:title="Others">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/signIn"
+                    android:title="@string/sign_in" />
+
+                <item
+                    android:id="@+id/signOut"
+                    android:title="@string/sign_out" />
+            </group>
+        </menu>
+    </item>
+
+
+</menu>

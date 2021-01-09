@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.neo.notes360.MainActivity">
     <item
-        android:id="@+id/action_delete_notes"
+        android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="delete all notes"/>
+        android:title="Save"
+        android:icon="@drawable/ic_baseline_save_24"
+        android:iconTint="@color/white"
+        app:showAsAction="ifRoom" />
 </menu>

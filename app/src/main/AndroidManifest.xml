@@ -9,6 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Notes360">
+        <activity android:name=".NoteDetailsActivity"></activity>
+        <activity android:name=".AddEditActivity" />
+        <activity
+            android:name=".SignInActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
