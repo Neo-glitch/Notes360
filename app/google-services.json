@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "799078725952",
+    "project_id": "notes360-6ee59",
+    "storage_bucket": "notes360-6ee59.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799078725952:android:d92a113c801326b9aea2a5",
+        "android_client_info": {
+          "package_name": "com.neo.notes360"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "799078725952-cqo1p41456h49ni70gb3lug3t2s9d5dn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN_Z9cHtT_H-tEBT7-fQKWcsfjtdoslUg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "799078725952-cqo1p41456h49ni70gb3lug3t2s9d5dn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
