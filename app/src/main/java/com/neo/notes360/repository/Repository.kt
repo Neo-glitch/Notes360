@@ -3,6 +3,8 @@ package com.neo.notes360.repository
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
 import com.neo.notes360.database.Note
 import com.neo.notes360.database.NoteDao
 import com.neo.notes360.database.NoteRoomDatabase
@@ -13,21 +15,22 @@ import java.util.concurrent.Executors
 
 class Repository(application: Application) {
     private val noteDao: NoteDao
-    val allNotes: LiveData<List<Note>>
+    val allNotes: LiveData<PagedList<Note>>
     private val mExecutorService: ExecutorService
 
     init {
         val noteDb =NoteRoomDatabase.getDatabase(application)
         noteDao = noteDb!!.noteDao()
-        allNotes = noteDao.notes    // retrieves LiveData list of notes
+        allNotes = LivePagedListBuilder(noteDao.notes, 10).build()    // retrieves LiveData list of notes
         mExecutorService =
             Executors.newFixedThreadPool(2)
-
     }
 
     /*
     Things related to database
      */
+    fun retrieveNotes() : LiveData<PagedList<Note>> = allNotes
+
     fun insert(note: Note){
         mExecutorService.execute {
             noteDao.insert(note)
