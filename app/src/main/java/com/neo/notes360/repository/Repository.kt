@@ -50,7 +50,9 @@ class Repository(application: Application) {
     }
 
     fun deleteAllNotes(){
-        noteDao.deleteAllNotes()
+        mExecutorService.execute {
+            noteDao.deleteAllNotes()
+        }
     }
     //////////
 

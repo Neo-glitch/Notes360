@@ -1,9 +1,11 @@
 package com.neo.notes360.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -21,6 +23,7 @@ import com.neo.notes360.database.Note
 import com.neo.notes360.model.Idelete
 import com.neo.notes360.model.NoteRvAdapter
 import com.neo.notes360.viewmodel.MainActivityViewModel
+import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, Idelete {
     // widgets
@@ -55,10 +58,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initRecyclerView()
 
         mAddNoteFab.setOnClickListener {
-            val intent = Intent(this, AddEditActivity::class.java)
-            intent.putExtra(Constants.NEW_NOTE_INTENT, Constants.NEW_NOTE)
-            startActivity(intent)
-            overridePendingTransition(android.R.anim.slide_out_right, android.R.anim.slide_in_left)
+            val intent = Intent(it.context, AddEditActivity::class.java)
+            intent.putExtra(Constants.NOTE_TYPE, Constants.NEW_NOTE)
+            startActivityForResult(intent, Constants.NEW_NOTE)
+//            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
     }
 
@@ -93,9 +96,40 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    override fun onResume() {
+        super.onResume()
+        mNavigationView.setCheckedItem(R.id.home)
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == Constants.NEW_NOTE && resultCode == Activity.RESULT_OK){
+            val noteTitle = data!!.getStringExtra(Constants.NOTE_TITLE)?.trim()
+            val noteContent = data.getStringExtra(Constants.NOTE_CONTENT)?.trim()
+            val lastUpdated = Calendar.getInstance().time
+
+            if(noteContent?.length!! < 1 || noteTitle?.length!! < 1){  // no note content and title
+                Toast.makeText(this, "Note must have a title and content to be saved", Toast.LENGTH_SHORT).show()
+            } else {
+                val note = Note(null, noteTitle, noteContent, lastUpdated)
+                mViewModel.insertNote(note)
+                Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
+            }
+        } else if(requestCode == Constants.EDIT_NOTE && resultCode == Activity.RESULT_OK){
+            val noteId = data!!.getIntExtra(Constants.NOTE_ID, -1)
+            val noteTitle = data.getStringExtra(Constants.NOTE_TITLE)?.trim()
+            val noteContent = data.getStringExtra(Constants.NOTE_CONTENT)?.trim()
+            val lastUpdated = Calendar.getInstance().time
+
+            if(noteContent?.length!! < 1 || noteTitle?.length!! < 1){  // no note content and title
+                Toast.makeText(this, "Note must have a title and content to be saved", Toast.LENGTH_SHORT).show()
+            } else {
+                val note = Note(noteId, noteTitle, noteContent, lastUpdated)
+                mViewModel.updateNote(note)
+                Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 
@@ -105,7 +139,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_delete_notes -> true
+            R.id.action_delete_all_notes -> {
+                mViewModel.deleteAllNotes()
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -126,7 +163,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    override fun onBackPressed() {
+        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mDrawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+    }
+
     override fun deleteSingleNote(note: Note) {
-        TODO("Not yet implemented")
+        mViewModel.deleteNote(note)
     }
 }

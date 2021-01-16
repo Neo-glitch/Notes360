@@ -35,8 +35,8 @@ abstract class NoteRoomDatabase : RoomDatabase() {
                                 "note_database"
                             )
                                 .addCallback(object : Callback() {
-                                    override fun onOpen(db: SupportSQLiteDatabase) {
-                                        super.onOpen(db)
+                                    override fun onCreate(db: SupportSQLiteDatabase) {
+                                        super.onCreate(db)
                                         //            new PopulateDbAsync(INSTANCE).execute();
                                         val words = arrayOf(
                                             "dolphin",
@@ -57,10 +57,9 @@ abstract class NoteRoomDatabase : RoomDatabase() {
                                                 mDao = noteRoomDatabase?.noteDao()!!
                                                 mDao.deleteAllNotes()
                                                 for (i in 0..words.size - 1) {
-                                                    val word = Note(
-                                                        i,
+                                                    val word = Note(null,
                                                         "title$i",
-                                                        "content$2",
+                                                        "content$i",
                                                         Calendar.getInstance().time
                                                     )
                                                     mDao.insert(word)

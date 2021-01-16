@@ -3,6 +3,7 @@ package com.neo.notes360
 class Constants {
 
     companion object{
+        const val NOTE_TYPE = "note_type"
         const val NEW_NOTE_INTENT = "new_note"
         const val EDIT_NOTE_INTENT = "edit_note"
         const val NEW_NOTE = 0

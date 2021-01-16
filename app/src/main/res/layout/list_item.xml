@@ -80,7 +80,7 @@
                         android:id="@+id/noteContent"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:maxLines="4"
+                        android:maxLines="3"
                         android:padding="2dp"
                         android:text="TextView"
                         android:textAlignment="viewStart"

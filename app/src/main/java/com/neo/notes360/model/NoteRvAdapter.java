@@ -82,6 +82,7 @@ public class NoteRvAdapter extends PagedListAdapter<Note, NoteRvAdapter.NoteView
         }
 
         public void setData(Note note) {
+            this.note = note;
             noteTitle.setText(note.getNoteTitle());
             noteContent.setText(note.getNoteContent());
             noteId = note.getId();
@@ -93,7 +94,8 @@ public class NoteRvAdapter extends PagedListAdapter<Note, NoteRvAdapter.NoteView
                 intent.putExtra(Constants.NOTE_ID, noteId);
                 intent.putExtra(Constants.NOTE_TITLE, noteTitle.getText().toString());
                 intent.putExtra(Constants.NOTE_CONTENT, noteContent.getText().toString());
-                ((AppCompatActivity) mContext).startActivityForResult(intent, Constants.EDIT_NOTE);
+//                intent.putExtra(Constants.NOTE_TYPE, Constants.EDIT_NOTE);
+                ((AppCompatActivity) mContext).startActivity(intent);
             });
 
             menuIcon.setOnClickListener(v -> {
@@ -103,12 +105,13 @@ public class NoteRvAdapter extends PagedListAdapter<Note, NoteRvAdapter.NoteView
                     editIntent.putExtra(Constants.NOTE_ID, noteId);
                     editIntent.putExtra(Constants.NOTE_TITLE, noteTitle.getText().toString());
                     editIntent.putExtra(Constants.NOTE_CONTENT, noteContent.getText().toString());
+//                    editIntent.putExtra(Constants.NOTE_TYPE, Constants.EDIT_NOTE);
                     ((AppCompatActivity) mContext).startActivityForResult(editIntent, Constants.EDIT_NOTE);
                     return true;
                 });
 
                 menu.getMenu().add("Delete").setOnMenuItemClickListener(menuItem -> {
-                    mListener.deleteSingleNote(note);
+                    mListener.deleteSingleNote(this.note);
                     return true;
                 });
                 menu.show();
