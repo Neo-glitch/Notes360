@@ -13,7 +13,7 @@
         <activity android:name=".ui.AddEditActivity"
             android:theme="@style/Theme.Notes360.NoActionBar"/>
         <activity
-            android:name=".ui.SignInActivity"
+            android:name=".ui.auth.SignInActivity"
             android:theme="@style/Theme.Notes360.NoActionBar"
             android:parentActivityName=".ui.MainActivity" />
         <activity

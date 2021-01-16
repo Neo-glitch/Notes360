@@ -58,6 +58,7 @@ class NoteDetailsActivity : AppCompatActivity() {
             editIntent.putExtra(Constants.NOTE_TITLE, mViewModel.noteTitle.value)
             editIntent.putExtra(Constants.NOTE_CONTENT, mViewModel.noteContent.value)
             startActivityForResult(editIntent, Constants.EDIT_NOTE)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
     }
 

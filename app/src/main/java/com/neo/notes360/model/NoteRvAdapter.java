@@ -96,6 +96,7 @@ public class NoteRvAdapter extends PagedListAdapter<Note, NoteRvAdapter.NoteView
                 intent.putExtra(Constants.NOTE_CONTENT, noteContent.getText().toString());
 //                intent.putExtra(Constants.NOTE_TYPE, Constants.EDIT_NOTE);
                 ((AppCompatActivity) mContext).startActivity(intent);
+                ((AppCompatActivity)mContext).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             });
 
             menuIcon.setOnClickListener(v -> {
@@ -107,6 +108,7 @@ public class NoteRvAdapter extends PagedListAdapter<Note, NoteRvAdapter.NoteView
                     editIntent.putExtra(Constants.NOTE_CONTENT, noteContent.getText().toString());
 //                    editIntent.putExtra(Constants.NOTE_TYPE, Constants.EDIT_NOTE);
                     ((AppCompatActivity) mContext).startActivityForResult(editIntent, Constants.EDIT_NOTE);
+                    ((AppCompatActivity)mContext).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     return true;
                 });
 

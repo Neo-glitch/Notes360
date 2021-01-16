@@ -1,4 +1,4 @@
-package com.neo.notes360.ui
+package com.neo.notes360.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
