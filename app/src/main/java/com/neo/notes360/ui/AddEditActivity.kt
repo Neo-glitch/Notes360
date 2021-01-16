@@ -59,9 +59,11 @@ class AddEditActivity : AppCompatActivity() {
                 resultIntent.putExtra(Constants.NOTE_CONTENT, addEditNoteContent.text.toString())
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
+                return true
             }
             R.id.close -> {
                 finish()
+                return true
             }
         }
         return super.onOptionsItemSelected(item)
