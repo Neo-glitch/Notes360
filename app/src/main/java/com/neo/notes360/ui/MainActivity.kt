@@ -22,6 +22,7 @@ import com.neo.notes360.R
 import com.neo.notes360.database.Note
 import com.neo.notes360.model.Idelete
 import com.neo.notes360.model.NoteRvAdapter
+import com.neo.notes360.ui.auth.SignInActivity
 import com.neo.notes360.viewmodel.MainActivityViewModel
 import java.util.*
 
@@ -61,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val intent = Intent(it.context, AddEditActivity::class.java)
             intent.putExtra(Constants.NOTE_TYPE, Constants.NEW_NOTE)
             startActivityForResult(intent, Constants.NEW_NOTE)
-//            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
     }
 
@@ -148,7 +149,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        mDrawerLayout.closeDrawer(GravityCompat.START)
         when(item.itemId){
             R.id.home -> {
                 return true
@@ -160,6 +160,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return true
             }
         }
+        mDrawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
