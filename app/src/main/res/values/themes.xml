@@ -17,6 +17,13 @@
     <style name="Theme.Notes360.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <!-- sets color for overflow button-->
+        <item name="actionOverflowButtonStyle">@style/actionOverflowButtonStyle</item>
+    </style>
+
+    <!-- This style is where you define the tint color of your overflow menu button -->
+    <style name="actionOverflowButtonStyle" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/white</item>
     </style>
 
     <style name="Theme.Notes360.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

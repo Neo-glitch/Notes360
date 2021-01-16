@@ -9,7 +9,7 @@ import java.util.*
 @Entity(tableName = "notes_table")
 data class Note (
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int?,
     @ColumnInfo(name = "note_title")
     val noteTitle: String?,
     @ColumnInfo(name = "note_content")

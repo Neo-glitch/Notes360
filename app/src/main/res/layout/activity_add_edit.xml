@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AddEditFragment">
+    tools:context=".ui.AddEditActivity">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -17,10 +17,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar_addedit"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@color/colorPrim"
             app:popupTheme="@style/Theme.Notes360.PopupOverlay">
 
             <EditText
@@ -28,6 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
+                android:paddingStart="8dp"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
 
@@ -41,12 +42,15 @@
         android:layout_height="0dp"
         android:background="#E6E4CE0E"
         android:ems="10"
+        android:fontFamily="@font/poppins_semibold"
         android:gravity="start|top"
-        android:inputType="textMultiLine"
+        android:inputType="textShortMessage|textLongMessage|textMultiLine|text|textCapSentences"
+        android:padding="8dp"
+        android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
