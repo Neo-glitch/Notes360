@@ -5,11 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
-import com.neo.notes360.database.Note
-import com.neo.notes360.database.NoteDao
-import com.neo.notes360.database.NoteRoomDatabase
-import kotlinx.coroutines.newFixedThreadPoolContext
-import kotlinx.coroutines.newSingleThreadContext
+import com.neo.notes360.dataSource.database.Note
+import com.neo.notes360.dataSource.database.NoteDao
+import com.neo.notes360.dataSource.database.NoteRoomDatabase
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

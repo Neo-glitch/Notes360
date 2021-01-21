@@ -3,9 +3,8 @@ package com.neo.notes360.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
-import com.neo.notes360.database.Note
+import com.neo.notes360.dataSource.database.Note
 import com.neo.notes360.repository.Repository
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {

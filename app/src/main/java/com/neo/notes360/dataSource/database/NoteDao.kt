@@ -1,6 +1,5 @@
-package com.neo.notes360.database
+package com.neo.notes360.dataSource.database
 
-import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
 

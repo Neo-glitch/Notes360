@@ -13,12 +13,14 @@
         <activity android:name=".ui.AddEditActivity"
             android:theme="@style/Theme.Notes360.NoActionBar"/>
         <activity
-            android:name=".ui.auth.SignInActivity"
+            android:name=".ui.auth.SignInSignUpActivity"
             android:theme="@style/Theme.Notes360.NoActionBar"
-            android:parentActivityName=".ui.MainActivity" />
+            android:parentActivityName=".ui.MainActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Notes360.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
