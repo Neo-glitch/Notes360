@@ -2,6 +2,7 @@ package com.neo.notes360.dataSource.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import java.util.*
 
@@ -15,5 +16,7 @@ data class Note (
     @ColumnInfo(name = "note_content")
     val noteContent: String?,
     @ColumnInfo(name = "last_updated")
-    val last_updated: Date
-)
+    val last_updated: Date?
+){
+     constructor(): this(null, "", "", null)
+}

@@ -42,7 +42,6 @@ class ResendVerificationViewModel(application: Application) : AndroidViewModel(a
     }
 
     private fun sendVerificationMail() {
-
         val user = mAuth.currentUser
 
         user?.sendEmailVerification()

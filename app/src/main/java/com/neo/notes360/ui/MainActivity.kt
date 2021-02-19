@@ -81,12 +81,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun initRecyclerView() {
         val adapter = NoteRvAdapter(this);
-        mNotesRv.layoutManager = GridLayoutManager( this, 2)
+        mNotesRv.layoutManager = GridLayoutManager(this, 2)
         mNotesRv.adapter = adapter
 
         mViewModel.retrieveAllNotes().observe(this) { notes ->
             adapter.submitList(notes)
-            mNotesRv.post {mNotesRv.smoothScrollToPosition(0)}
+//            mNotesRv.post {mNotesRv.smoothScrollToPosition(0)}    // previous main code to scroll on line
+            mNotesRv.postDelayed(({ mNotesRv.smoothScrollToPosition(0) }), 300)
         }
     }
 
@@ -187,6 +188,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.signOut -> {
                 mAuth.signOut()
+                return true
+            }
+            R.id.uploadNotes -> {
+                if (mAuth.currentUser != null) {
+                    mViewModel.queryFirebaseDbAndUpload()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Must be logged in with a verified account to upload notes",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return true
+            }
+            R.id.downloadNotes -> {
+                if (mAuth.currentUser != null) {
+                    mViewModel.downloadNotesFromFirebase()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Must be logged in with a verified account to download notes",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
                 return true
             }
         }

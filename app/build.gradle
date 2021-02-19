@@ -52,12 +52,17 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
-    // lined edit Text
-//    implementation 'com.github.Sanaebadi97:NotePad:Tag'
-
     // paging
     def paging_version = "2.1.2"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version" // For Kotlin use paging-runtime-ktx
+
+    // workManager
+    def work_version = "2.4.0"
+    // (Java only)
+    implementation "androidx.work:work-runtime:$work_version"
+    // Kotlin + coroutines
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+
 
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
