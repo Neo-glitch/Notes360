@@ -1,4 +1,4 @@
-package com.neo.notes360.database
+package com.neo.notes360.dataSource.database
 
 import android.content.Context
 import androidx.room.Database
@@ -9,7 +9,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.time.days
 
 
 @Database(entities = [Note::class], version = 1, exportSchema = false)

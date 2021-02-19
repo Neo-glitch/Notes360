@@ -17,21 +17,30 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.neo.notes360.Constants
 import com.neo.notes360.R
-import com.neo.notes360.database.Note
+import com.neo.notes360.dataSource.database.Note
 import com.neo.notes360.model.Idelete
 import com.neo.notes360.model.NoteRvAdapter
-import com.neo.notes360.ui.auth.SignInActivity
+import com.neo.notes360.ui.auth.SignInSignUpActivity
 import com.neo.notes360.viewmodel.MainActivityViewModel
 import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, Idelete {
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+
     // widgets
     private lateinit var mDrawerLayout: DrawerLayout
     private lateinit var mToggle: ActionBarDrawerToggle
     private lateinit var mNavigationView: NavigationView
     private lateinit var mToolbar: Toolbar
+
+    // firebase
+    private lateinit var mAuth: FirebaseAuth
 
 
     private val mNotesRv by lazy {
@@ -49,10 +58,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        mToolbar = findViewById(R.id.toolbar)
+        mToolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(mToolbar)
         mDrawerLayout = findViewById(R.id.drawer)
+
         mNavigationView = findViewById(R.id.nav_view)
+
+        mAuth = FirebaseAuth.getInstance()
 
 
         initNavViewAndDrawer()
@@ -66,18 +78,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+
     private fun initRecyclerView() {
         val adapter = NoteRvAdapter(this);
         mNotesRv.layoutManager = GridLayoutManager(this, 2)
         mNotesRv.adapter = adapter
 
-        mViewModel.retrieveAllNotes().observe(this) { notes -> adapter.submitList(notes)}
+        mViewModel.retrieveAllNotes().observe(this) { notes ->
+            adapter.submitList(notes)
+//            mNotesRv.post {mNotesRv.smoothScrollToPosition(0)}    // previous main code to scroll on line
+            mNotesRv.postDelayed(({ mNotesRv.smoothScrollToPosition(0) }), 300)
+        }
     }
+
 
     private fun initNavViewAndDrawer() {
         mToolbar.navigationIcon = resources.getDrawable(R.drawable.ic_align_left, null)
         mToggle =
-            ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+            ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolbar,
                 R.string.open,
                 R.string.close
             )
@@ -105,26 +124,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == Constants.NEW_NOTE && resultCode == Activity.RESULT_OK){
+        if (requestCode == Constants.NEW_NOTE && resultCode == Activity.RESULT_OK) {
             val noteTitle = data!!.getStringExtra(Constants.NOTE_TITLE)?.trim()
             val noteContent = data.getStringExtra(Constants.NOTE_CONTENT)?.trim()
             val lastUpdated = Calendar.getInstance().time
 
-            if(noteContent?.length!! < 1 || noteTitle?.length!! < 1){  // no note content and title
-                Toast.makeText(this, "Note must have a title and content to be saved", Toast.LENGTH_SHORT).show()
+            if (noteContent?.length!! < 1 || noteTitle?.length!! < 1) {  // no note content and title
+                Toast.makeText(
+                    this,
+                    "Note must have a title and content to be saved",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 val note = Note(null, noteTitle, noteContent, lastUpdated)
                 mViewModel.insertNote(note)
                 Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
             }
-        } else if(requestCode == Constants.EDIT_NOTE && resultCode == Activity.RESULT_OK){
+        } else if (requestCode == Constants.EDIT_NOTE && resultCode == Activity.RESULT_OK) {
             val noteId = data!!.getIntExtra(Constants.NOTE_ID, -1)
             val noteTitle = data.getStringExtra(Constants.NOTE_TITLE)?.trim()
             val noteContent = data.getStringExtra(Constants.NOTE_CONTENT)?.trim()
             val lastUpdated = Calendar.getInstance().time
 
-            if(noteContent?.length!! < 1 || noteTitle?.length!! < 1){  // no note content and title
-                Toast.makeText(this, "Note must have a title and content to be saved", Toast.LENGTH_SHORT).show()
+            if (noteContent?.length!! < 1 || noteTitle?.length!! < 1) {  // no note content and title
+                Toast.makeText(
+                    this,
+                    "Note must have a title and content to be saved",
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 val note = Note(noteId, noteTitle, noteContent, lastUpdated)
                 mViewModel.updateNote(note)
@@ -132,7 +159,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
     }
-
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -149,23 +175,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        mDrawerLayout.closeDrawer(GravityCompat.START)
+        when (item.itemId) {
             R.id.home -> {
                 return true
             }
             R.id.signIn -> {
-                val intent = Intent(this, SignInActivity::class.java)
+                val intent = Intent(this, SignInSignUpActivity::class.java)
                 startActivity(intent)
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                 return true
             }
+            R.id.signOut -> {
+                mAuth.signOut()
+                return true
+            }
+            R.id.uploadNotes -> {
+                if (mAuth.currentUser != null) {
+                    mViewModel.queryFirebaseDbAndUpload()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Must be logged in with a verified account to upload notes",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return true
+            }
+            R.id.downloadNotes -> {
+                if (mAuth.currentUser != null) {
+                    mViewModel.downloadNotesFromFirebase()
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Must be logged in with a verified account to download notes",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                return true
+            }
         }
-        mDrawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
     override fun onBackPressed() {
-        if(mDrawerLayout.isDrawerOpen(GravityCompat.START)){
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()

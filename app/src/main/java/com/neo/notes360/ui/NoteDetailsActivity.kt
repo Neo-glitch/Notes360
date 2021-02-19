@@ -4,19 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import com.neo.notes360.Constants
 import com.neo.notes360.R
-import com.neo.notes360.database.Note
+import com.neo.notes360.dataSource.database.Note
 import com.neo.notes360.viewmodel.NoteDetailsActivityViewModel
 import kotlinx.android.synthetic.main.activity_note_details.*
 import java.util.*
-import kotlin.properties.Delegates
 
 class NoteDetailsActivity : AppCompatActivity() {
     companion object{

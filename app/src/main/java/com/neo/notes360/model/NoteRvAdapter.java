@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.neo.notes360.Constants;
 import com.neo.notes360.ui.NoteDetailsActivity;
 import com.neo.notes360.R;
-import com.neo.notes360.database.Note;
+import com.neo.notes360.dataSource.database.Note;
 import com.neo.notes360.ui.AddEditActivity;
 
 import java.util.Objects;
@@ -63,8 +63,8 @@ public class NoteRvAdapter extends PagedListAdapter<Note, NoteRvAdapter.NoteView
             holder.setData(note);
             holder.setListeners();
         }
-
     }
+
 
     class NoteViewHolder extends RecyclerView.ViewHolder {
         private int noteId = 0;

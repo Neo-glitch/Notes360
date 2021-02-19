@@ -11,5 +11,10 @@ class Constants {
         const val NOTE_ID = "note_id"
         const val NOTE_TITLE = "note_title"
         const val NOTE_CONTENT = "note_content"
+
+        // firebase constants
+        const val NOTES_360 = "notes_360"
+        const val NOTES = "notes"
+        const val LAST_UPDATED = "last_updated"
     }
 }
