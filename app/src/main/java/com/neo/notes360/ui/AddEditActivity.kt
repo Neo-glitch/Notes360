@@ -35,7 +35,7 @@ class AddEditActivity : AppCompatActivity() {
             noteTitle = intentFromDetails.getStringExtra(Constants.NOTE_TITLE)!!
             noteContent = intentFromDetails.getStringExtra(Constants.NOTE_CONTENT)!!
         } else {        // new note
-            noteTitle = "Untitled"
+            noteTitle = ""
             noteContent = ""
             noteId = -1
         }

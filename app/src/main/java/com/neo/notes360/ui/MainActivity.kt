@@ -1,12 +1,18 @@
 package com.neo.notes360.ui
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -38,6 +44,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mToggle: ActionBarDrawerToggle
     private lateinit var mNavigationView: NavigationView
     private lateinit var mToolbar: Toolbar
+    private lateinit var mNoNoteTv: TextView
+    private lateinit var mNoNoteIv: ImageView
+    private lateinit var downloadProgress:ProgressDialog
+    private lateinit var uploadProgress: ProgressDialog
 
     // firebase
     private lateinit var mAuth: FirebaseAuth
@@ -61,12 +71,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mToolbar = findViewById(R.id.toolbar_main)
         setSupportActionBar(mToolbar)
         mDrawerLayout = findViewById(R.id.drawer)
-
         mNavigationView = findViewById(R.id.nav_view)
+        mNoNoteTv = findViewById(R.id.no_note_tv)
+        mNoNoteIv = findViewById(R.id.no_note_iv)
 
-        mAuth = FirebaseAuth.getInstance()
+        mViewModel.mAuth.observe(this){
+            mAuth = it
+        }
 
-
+        initProgressDialog()
         initNavViewAndDrawer()
         initRecyclerView()
 
@@ -78,6 +91,57 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    private fun initProgressDialog() {
+        initUploadProgress()
+        initDownloadProgress()
+    }
+
+    private fun initDownloadProgress() {
+        downloadProgress = ProgressDialog(this)
+        mViewModel.mNoteDownloadProgress.observe(this) { progressVisibility ->
+            if (progressVisibility == 1) {
+                Log.d(TAG, "initDownloadProgress: 1")
+                downloadProgress.setMessage("Please wait, while note downloads")
+                downloadProgress.setCanceledOnTouchOutside(false)
+                downloadProgress.show()
+            } else if(progressVisibility == 0) {
+                Log.d(TAG, "initDownloadProgress: 0")
+                downloadProgress.dismiss()
+            }
+        }
+    }
+
+    private fun initUploadProgress() {
+        uploadProgress = ProgressDialog(this)
+        mViewModel.mNoteUploadProgress.observe(this) { progressVisibility ->
+            if (progressVisibility == 1) {
+                uploadProgress.setMessage("Please wait, while note uploads")
+                uploadProgress.setCanceledOnTouchOutside(false)
+                uploadProgress.show()
+            } else if(progressVisibility == 0){
+                uploadProgress.dismiss()
+            }
+        }
+    }
+
+    private fun updateNavView() {
+        val navView = mNavigationView.getHeaderView(0)  // 0 since just one header for navView
+        val navUserName = navView.findViewById<TextView>(R.id.navUserName)
+        val navUserEmail = navView.findViewById<TextView>(R.id.navUserEmail)
+        if(mAuth.currentUser != null){
+            navUserName.visibility = View.VISIBLE
+            navUserEmail.visibility = View.VISIBLE
+
+            val userName = mAuth.currentUser!!.displayName
+            val userEmail = mAuth.currentUser!!.email
+            navUserName.text = userName
+            navUserEmail.text = userEmail
+        } else {
+            navUserName.visibility = View.INVISIBLE
+            navUserEmail.visibility = View.INVISIBLE
+        }
+    }
+
 
     private fun initRecyclerView() {
         val adapter = NoteRvAdapter(this);
@@ -85,9 +149,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mNotesRv.adapter = adapter
 
         mViewModel.retrieveAllNotes().observe(this) { notes ->
-            adapter.submitList(notes)
+            if (notes.size == 0) {
+                mNotesRv.visibility = View.INVISIBLE
+                mNoNoteIv.visibility = View.VISIBLE
+                mNoNoteTv.visibility = View.VISIBLE
+            } else {
+                mNotesRv.visibility = View.VISIBLE
+                mNoNoteIv.visibility = View.GONE
+                mNoNoteTv.visibility = View.GONE
+                adapter.submitList(notes)
 //            mNotesRv.post {mNotesRv.smoothScrollToPosition(0)}    // previous main code to scroll on line
-            mNotesRv.postDelayed(({ mNotesRv.smoothScrollToPosition(0) }), 300)
+                mNotesRv.postDelayed(({ mNotesRv.smoothScrollToPosition(0) }), 300)
+            }
+
         }
     }
 
@@ -118,6 +192,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
+        updateNavView()
         mNavigationView.setCheckedItem(R.id.home)
     }
 
@@ -187,16 +262,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 return true
             }
             R.id.signOut -> {
-                mAuth.signOut()
+                mViewModel.signOut()
+                updateNavView()
                 return true
             }
             R.id.uploadNotes -> {
-                if (mAuth.currentUser != null) {
-                    mViewModel.queryFirebaseDbAndUpload()
+                if (checkIfNoteSaved()) {
+                    if (mAuth.currentUser != null) {
+                        displayNoteUploadAlert()
+                    } else {
+                        Toast.makeText(
+                            this,
+                            "Must be logged in with a verified account to upload notes",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 } else {
                     Toast.makeText(
-                        this,
-                        "Must be logged in with a verified account to upload notes",
+                        this, "You need to have a saved note before upload is possible",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
@@ -204,7 +287,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.downloadNotes -> {
                 if (mAuth.currentUser != null) {
-                    mViewModel.downloadNotesFromFirebase()
+                    displayNoteDownloadAlert()
                 } else {
                     Toast.makeText(
                         this,
@@ -216,6 +299,44 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
         return true
+    }
+
+    private fun checkIfNoteSaved(): Boolean {
+        var ifNoteSaved = false
+        mViewModel.retrieveAllNotes().observe(this) { notes ->
+            ifNoteSaved = notes.size > 0
+        }
+        return ifNoteSaved
+    }
+
+    private fun displayNoteUploadAlert() {
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle("Are you sure?")
+            .setMessage("Uploading notes to the cloud will overwrite all previous cloud saved notes with the notes saved currently on this device")
+            .setPositiveButton(
+                "Upload"
+            ) { dialogInterface, i ->
+                run {
+                    mViewModel.queryFirebaseDbAndUpload()
+                }
+            }
+            .setNegativeButton("Cancel") { dialogInterface, i -> }
+        alertDialog.show()
+    }
+
+    private fun displayNoteDownloadAlert() {
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle("Are you sure?")
+            .setMessage("Downloading notes from the cloud will overwrite notes saved currently on this device with notes downloaded from the cloud")
+            .setPositiveButton(
+                "Download"
+            ) { dialogInterface, i ->
+                run {
+                    mViewModel.downloadNotesFromFirebase()
+                }
+            }
+            .setNegativeButton("Cancel") { dialogInterface, i -> }
+        alertDialog.show()
     }
 
     override fun onBackPressed() {

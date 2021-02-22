@@ -3,6 +3,7 @@ package com.neo.notes360.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -10,11 +11,18 @@ import com.neo.notes360.dataSource.database.Note
 import com.neo.notes360.repository.Repository
 
 class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
-    val allNotes: LiveData<PagedList<Note>>
+    private val allNotes: LiveData<PagedList<Note>>
     private val noteRepository = Repository(application)
+    val mAuth: MutableLiveData<FirebaseAuth> = MutableLiveData()
+
+    var mNoteUploadProgress: MutableLiveData<Int> = MutableLiveData()
+    var mNoteDownloadProgress: MutableLiveData<Int> = MutableLiveData()
 
     init {
         allNotes = noteRepository.retrieveNotes()
+        mAuth.value = noteRepository.mAuth
+        mNoteUploadProgress = noteRepository.mNoteUploadProgress
+        mNoteDownloadProgress = noteRepository.mNoteDownloadProgress
     }
 
 
@@ -47,6 +55,10 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
 
     fun downloadNotesFromFirebase(){
         noteRepository.downloadNotesFromFirebase()
+    }
+
+    fun signOut(){
+        noteRepository.signOut()
     }
 
 }

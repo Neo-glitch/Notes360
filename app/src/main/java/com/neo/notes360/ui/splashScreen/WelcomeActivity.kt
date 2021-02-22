@@ -23,7 +23,7 @@ class WelcomeActivity : AppCompatActivity() {
 
         mHandlerThread = HandlerThread("Welcome Activity Thread")
         mHandlerThread.start()
-        Handler(mHandlerThread.looper).postDelayed({startMainActivity()}, 500)
+        Handler(mHandlerThread.looper).postDelayed({startMainActivity()}, 400)
         mWindow.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 )

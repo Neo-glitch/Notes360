@@ -28,16 +28,16 @@ class Repository(application: Application) {
     private val noteDao: NoteDao
     val allNotes: LiveData<PagedList<Note>>
     private val mExecutorService: ExecutorService
-
     private val firebasedb: FirebaseFirestore by lazy {
         FirebaseFirestore.getInstance()
     }
-    private val mAuth: FirebaseAuth by lazy {
+    val mAuth: FirebaseAuth by lazy {
         FirebaseAuth.getInstance()
     }
     private lateinit var currentUserId: String
     private val noteIdList: MutableList<String>
-
+    val mNoteUploadProgress: MutableLiveData<Int> = MutableLiveData()
+    val mNoteDownloadProgress: MutableLiveData<Int> = MutableLiveData()
 
     init {
         val noteDb = NoteRoomDatabase.getDatabase(application)
@@ -48,6 +48,8 @@ class Repository(application: Application) {
             Executors.newFixedThreadPool(2)
         mContext = application
         noteIdList = mutableListOf<String>()
+        mNoteUploadProgress.value = 0
+        mNoteDownloadProgress.value = 0
     }
 
     /*
@@ -85,6 +87,7 @@ class Repository(application: Application) {
     Cloud related stuff for uploads
      */
     fun queryFirebaseDbAndUpload() {
+        mNoteUploadProgress.value = 1
         currentUserId = mAuth.currentUser!!.uid
         firebasedb.collection(Constants.NOTES_360).document(Constants.NOTES)
             .collection(currentUserId)
@@ -104,11 +107,14 @@ class Repository(application: Application) {
                 } else {
                     uploadNotesToFirebase(allNotes.value!!.toMutableList())
                 }
+            }.addOnFailureListener {
+                mNoteUploadProgress.value = 0
+                displayToast("Error uploading notes, please check your internet")
             }
     }
 
     // clears collection loc of current user in db before upload
-    fun clearFirebaseDbForNewStart(noteIdList: MutableList<String>) {
+    private fun clearFirebaseDbForNewStart(noteIdList: MutableList<String>) {
         val batch: WriteBatch = firebasedb.batch()
 
         for (i in noteIdList.indices) {
@@ -117,30 +123,41 @@ class Repository(application: Application) {
                 .document(noteIdList[i])
             batch.delete(docRef)
         }
-
         batch.commit().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 uploadNotesToFirebase(allNotes.value!!.toMutableList())
+            } else{
+                mNoteUploadProgress.value = 0
+                displayToast("Error uploading notes, please check your internet")
             }
+        }.addOnFailureListener {
+            mNoteUploadProgress.value = 0
+            displayToast("Error uploading notes, please check your internet")
         }
     }
 
-    fun uploadNotesToFirebase(allNotes: MutableList<Note>) {
+    private fun uploadNotesToFirebase(allNotes: MutableList<Note>) {
         currentUserId = mAuth.currentUser!!.uid
+        val batch: WriteBatch = firebasedb.batch()
         for (note in allNotes) {
             Log.d(TAG, "note Title: ${note.noteTitle}")
             var noteDocId = note.id
 
             val noteDocRef = firebasedb.collection(Constants.NOTES_360).document(Constants.NOTES)
                 .collection(currentUserId).document(noteDocId.toString())
-            noteDocRef.set(note).addOnSuccessListener {
-                Log.d(TAG, "uploadNotesToFirebase: done")
-            }.addOnFailureListener { e ->
-            }
+            batch.set(noteDocRef, note)
+        }
+        batch.commit().addOnSuccessListener {
+            mNoteUploadProgress.value = 0
+            displayToast("Notes uploaded successfully")
+        }.addOnFailureListener{
+            mNoteUploadProgress.value = 0
+            displayToast("Error uploading notes, please check your internet")
         }
     }
 
     fun downloadNotesFromFirebase() {
+        mNoteDownloadProgress.value = 1
         currentUserId = mAuth.currentUser!!.uid
         var notesList = mutableListOf<Note>()
 
@@ -159,17 +176,31 @@ class Repository(application: Application) {
                             Handler().postDelayed(
                                 { insert(note) }, 80)
                         }
+                        mNoteDownloadProgress.value = 0
+                        notesList.clear()
+                        displayToast("Notes downloaded successfully")
                         Log.d(TAG, "note download done")
                     } else {
-                        Toast.makeText(
-                            mContext,
-                            "Couldn't find any of your notes in the cloud",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        mNoteDownloadProgress.value = 0
+                        displayToast("no note found in cloud, please ensure you have notes saved in the cloud")
                     }
+                } else {
+                    mNoteDownloadProgress.value = 0
+                    displayToast("Couldn't find any of your notes in the cloud, check your internet or ensure you have notes saved in the cloud")
                 }
+            }.addOnFailureListener {
+                mNoteDownloadProgress.value = 0
+                displayToast("Error downloading notes, please check your internet")
             }
     }
-    ///////
+
+    fun signOut(){
+        mAuth.signOut()
+        displayToast("Signed out successfully")
+    }
+
+    private fun displayToast(message: String){
+        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show()
+    }
 
 }
