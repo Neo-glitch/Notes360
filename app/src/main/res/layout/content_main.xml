@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/poppins_semibold"
-        android:text="No note found on this device. All saved notes will appear here"
+        android:text="@string/no_note_found_msg"
         android:textAlignment="center"
         android:textColor="@color/colorPrim"
         android:textSize="14sp"

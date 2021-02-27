@@ -51,8 +51,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     // firebase
     private lateinit var mAuth: FirebaseAuth
-
-
     private val mNotesRv by lazy {
         findViewById<RecyclerView>(R.id.notesRv)
     }
@@ -168,7 +166,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-
     private fun initNavViewAndDrawer() {
         mToolbar.navigationIcon = resources.getDrawable(R.drawable.ic_align_left, null)
         mToggle =
@@ -199,7 +196,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mNavigationView.setCheckedItem(R.id.home)
     }
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Constants.NEW_NOTE && resultCode == Activity.RESULT_OK) {
@@ -208,7 +204,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val lastUpdated = Calendar.getInstance().time
 
             if (noteContent?.length!! < 1 || noteTitle?.length!! < 1) {  // no note content and title
-                displayToast("Note must have a title and content to be saved")
+                displayToast(getString(R.string.note_must_have_title_and_content))
             } else {
                 val note = Note(null, noteTitle, noteContent, lastUpdated)
                 mViewModel.insertNote(note)
@@ -221,7 +217,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val lastUpdated = Calendar.getInstance().time
 
             if (noteContent?.length!! < 1 || noteTitle?.length!! < 1) {  // no note content and title
-                displayToast("Note must have a title and content to be saved")
+                displayToast(getString(R.string.note_must_have_title_and_content))
             } else {
                 val note = Note(noteId, noteTitle, noteContent, lastUpdated)
                 mViewModel.updateNote(note)
@@ -266,10 +262,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (mAuth.currentUser != null) {
                         displayNoteUploadAlert()
                     } else {
-                        displayToast("Must be logged in with a verified account to upload notes")
+                        displayToast(getString(R.string.criteria_to_upload_note))
                     }
                 } else {
-                    displayToast("You need to have a saved note before upload is possible")
+                    displayToast(getString(R.string.must_have_note))
                 }
                 return true
             }
@@ -277,7 +273,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (mAuth.currentUser != null) {
                     displayNoteDownloadAlert()
                 } else {
-                    displayToast("Must be logged in with a verified account to download notes")
+                    displayToast(getString(R.string.criteria_to_download_note))
                 }
                 return true
             }

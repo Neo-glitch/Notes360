@@ -19,14 +19,7 @@ class NoteDetailsActivity : AppCompatActivity() {
     companion object{
         private const val TAG = "NoteDetailsActivity"
     }
-
-    // var
-//    private lateinit var noteTitle: String
-//    private lateinit var noteContent: String
-//    private var noteId by Delegates.notNull<Int>()
-
     private lateinit var mViewModel: NoteDetailsActivityViewModel
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,11 +76,11 @@ class NoteDetailsActivity : AppCompatActivity() {
             mViewModel.noteContent.value = noteContent
 
             if(noteContent?.length!! < 1 || noteTitle?.length!! < 1){  // no note content and title
-                Toast.makeText(this, "Note must have a title and content to be saved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.note_must_have_title_and_content), Toast.LENGTH_SHORT).show()
             } else {
                 val note = Note(noteId, noteTitle, noteContent, lastUpdated)
                 mViewModel.updateNote(note)
-                Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.note_saved), Toast.LENGTH_SHORT).show()
             }
         }
     }

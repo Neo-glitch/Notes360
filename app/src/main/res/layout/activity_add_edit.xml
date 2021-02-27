@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/transparent"
                 android:paddingStart="8dp"
-                android:hint="Note Title"
+                android:hint="@string/hint_note_title"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
 
@@ -44,7 +44,7 @@
         android:layout_height="0dp"
         android:background="#E6E4CE0E"
         android:ems="10"
-        android:hint="Note Content"
+        android:hint="@string/hint_note_content"
         android:fontFamily="@font/poppins_semibold"
         android:gravity="start|top"
         android:inputType="textShortMessage|textLongMessage|textMultiLine|text|textCapSentences"

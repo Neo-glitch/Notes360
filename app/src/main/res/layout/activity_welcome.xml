@@ -37,7 +37,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Notes 36"
+            android:text="@string/welcome_screen_text"
             android:textColor="@color/colorPrim"
             android:textSize="20sp"
             android:textStyle="bold"

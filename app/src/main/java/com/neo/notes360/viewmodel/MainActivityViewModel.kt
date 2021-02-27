@@ -23,8 +23,7 @@ class MainActivityViewModel(application: Application) : AndroidViewModel(applica
         mNoteUploadProgress = noteRepository.mNoteUploadProgress
         mNoteDownloadProgress = noteRepository.mNoteDownloadProgress
     }
-
-
+    
     fun retrieveAllNotes(): LiveData<PagedList<Note>> = allNotes
 
     fun insertNote(note: Note) {
