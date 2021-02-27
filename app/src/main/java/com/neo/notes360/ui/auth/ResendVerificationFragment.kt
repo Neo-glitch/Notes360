@@ -25,7 +25,6 @@ class ResendVerificationFragment : Fragment() {
         ViewModelProvider(this)[ResendVerificationViewModel::class.java]
     }
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,26 +42,33 @@ class ResendVerificationFragment : Fragment() {
             if(etResendEmail.text.toString().trim().isNotEmpty() and etResendPassword.text.toString().trim().isNotEmpty()){
                 authAndResendEmail(etResendEmail.text.toString().trim(), etResendPassword.text.toString().trim())
             } else{
-                Toast.makeText(context, "Please input your valid email and password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.ask_for_right_email_and_password), Toast.LENGTH_SHORT).show()
             }
         }
 
-        mResendViewModel.progressBarVisibility.observe(viewLifecycleOwner, Observer {visibility ->
-            if(visibility == 1){
+        initProgressBar()
+        initOnBackPressed()
+        return view
+    }
+
+    private fun initOnBackPressed() {
+        mResendViewModel.mOnBackPressed.observe(viewLifecycleOwner, Observer { visibility ->
+            if (visibility == 1) {
+                (activity as SignInSignUpActivity).supportFragmentManager.popBackStack()
+            }
+        })
+    }
+
+    private fun initProgressBar() {
+        mResendViewModel.progressBarVisibility.observe(viewLifecycleOwner, Observer { visibility ->
+            if (visibility == 1) {
                 mProgress.visibility = View.VISIBLE
                 btnResendVerification.visibility = View.INVISIBLE
-            } else{
+            } else {
                 mProgress.visibility = View.INVISIBLE
                 btnResendVerification.visibility = View.VISIBLE
             }
         })
-
-        mResendViewModel.closeResendVerificationFragment.observe(viewLifecycleOwner, Observer { visibility ->
-            if(visibility == 1){
-                (activity as SignInSignUpActivity).supportFragmentManager.popBackStack()
-            }
-        })
-        return view
     }
 
     private fun authAndResendEmail(email:String, password: String) {

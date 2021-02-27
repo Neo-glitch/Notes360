@@ -12,10 +12,31 @@
     <string name="home">Home</string>
     <string name="upload_notes">Upload Notes</string>
     <string name="download_notes">Download Notes</string>
-    <string name="sign_in">Sign In</string>
+    <string name="sign_in">Sign In / Sign Up</string>
     <string name="sign_out">Sign out</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="open">open</string>
     <string name="close">close</string>
+    <string name="welcome_activity_handler_thread_name">Welcome Activity Thread</string>
+    <string name="launch_activity_thread_name">Launch Activity Thread</string>
+    <string name="ask_for_registered_email">Please enter your registered email, inorder to receive link</string>
+    <string name="ask_for_right_email_and_password">Please input your valid email and password</string>
+    <string name="ask_for_email_and_password">email and password is needed for login, please check</string>
+    <string name="frag_signin">FragSignIn</string>
+    <string name="add_frag_signin">AddFragSignIn</string>
+    <string name="frag_signup">FragSignUp</string>
+    <string name="add_frag_signup">AddFragSignUp</string>
+    <string name="frag_password_reset">FragPassWordReset</string>
+    <string name="add_frag_password_reset">AddFragPassWordReset</string>
+    <string name="frag_resend_verif">FragResendVerification</string>
+    <string name="add_frag_resend_verif">AddFragResendVerification</string>
+    <string name="passwords_not_match">Passwords do not match, check it please</string>
+    <string name="fill_all_fields">To create an account all fields must be filled</string>
+    <string name="note_saved">Note Saved</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="upload_dialog_message">Uploading notes to the cloud will overwrite all previous cloud saved notes with the notes saved currently on this device</string>
+    <string name="download_dialog_message">Downloading notes from the cloud will overwrite notes saved currently on this device with notes downloaded from the cloud</string>
+    <string name="download_progressbar_msg">Please wait, while note downloads</string>
+    <string name="upload_progress_bar_msg">Please wait, while note uploads</string>
 </resources>

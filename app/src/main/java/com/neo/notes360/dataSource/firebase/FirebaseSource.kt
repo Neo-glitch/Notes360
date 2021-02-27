@@ -19,5 +19,9 @@ class FirebaseSource {
         FirebaseFirestore.getInstance()
     }
 
+    fun getFirebaseDb(): FirebaseFirestore = mFirebaseDb
+    fun getAuth(): FirebaseAuth = mAuth
+
+
 
 }

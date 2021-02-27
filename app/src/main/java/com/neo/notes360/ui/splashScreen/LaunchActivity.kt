@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.neo.notes360.R
 
 class LaunchActivity : AppCompatActivity() {
     private val mWindow by lazy{
@@ -16,16 +17,9 @@ class LaunchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        mWindow.decorView.systemUiVisibility = (
-//                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-//                )
-
-        mHandlerThread = HandlerThread("Launch Activity Thread")
+        mHandlerThread = HandlerThread(getString(R.string.launch_activity_thread_name))
         mHandlerThread.start()
         Handler(mHandlerThread.looper).post { run { startWelcomeActivity() } }
-
-
     }
 
 

@@ -11,7 +11,6 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.auth.FirebaseAuth
 import com.neo.notes360.R
 import com.neo.notes360.viewmodel.PasswordResetViewModel
 
@@ -41,26 +40,35 @@ class PasswordResetFragment : Fragment() {
             if(etResetEmail.text.toString().trim().isNotEmpty()){
                 sendResetEmail(etResetEmail.text.toString().trim())
             } else{
-                Toast.makeText(context, "Please enter your registered email, inorder to receive link", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.ask_for_registered_email), Toast.LENGTH_SHORT).show()
             }
         }
 
-        mPasswordResetViewModel.progressBarVisibility.observe(viewLifecycleOwner, Observer {visibility ->
-            if(visibility == 1){
-                mProgress.visibility = View.VISIBLE
-                btnResetPassword.visibility = View.INVISIBLE
-            } else{
-                mProgress.visibility = View.INVISIBLE
-                btnResetPassword.visibility = View.VISIBLE
-            }
-        })
+        initProgressBar()
+        initOnBackPressed()
+        return view
+    }
 
-        mPasswordResetViewModel.closePasswordResetFragment.observe(viewLifecycleOwner, Observer { visibility ->
-            if(visibility == 1){
+    private fun initOnBackPressed() {
+        mPasswordResetViewModel.mOnBackPressed.observe(viewLifecycleOwner, Observer { visibility ->
+            if (visibility == 1) {
                 (activity as SignInSignUpActivity).supportFragmentManager.popBackStack()
             }
         })
-        return view
+    }
+
+    private fun initProgressBar() {
+        mPasswordResetViewModel.mProgressBarVisibility.observe(
+            viewLifecycleOwner,
+            Observer { visibility ->
+                if (visibility == 1) {
+                    mProgress.visibility = View.VISIBLE
+                    btnResetPassword.visibility = View.INVISIBLE
+                } else {
+                    mProgress.visibility = View.INVISIBLE
+                    btnResetPassword.visibility = View.VISIBLE
+                }
+            })
     }
 
     private fun sendResetEmail(email: String) {

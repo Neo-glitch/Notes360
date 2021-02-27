@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.neo.notes360.Constants
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -14,11 +15,8 @@ import java.util.concurrent.Executors
 @Database(entities = [Note::class], version = 1, exportSchema = false)
 @TypeConverters(DateTypeConverter::class)
 abstract class NoteRoomDatabase : RoomDatabase() {
-
-
     // dao
     abstract fun noteDao(): NoteDao
-
 
     companion object {
         private var noteRoomDatabase: NoteRoomDatabase? = null
@@ -31,50 +29,13 @@ abstract class NoteRoomDatabase : RoomDatabase() {
                             Room.databaseBuilder<NoteRoomDatabase>(
                                 context.applicationContext,
                                 NoteRoomDatabase::class.java,
-                                "note_database"
-                            )
-                                .addCallback(object : Callback() {
-                                    override fun onCreate(db: SupportSQLiteDatabase) {
-                                        super.onCreate(db)
-                                        //            new PopulateDbAsync(INSTANCE).execute();
-                                        val words = arrayOf(
-                                            "dolphin",
-                                            "crocodile",
-                                            "cobra",
-                                            "check",
-                                            "check",
-                                            "nigga",
-                                            "boy"
-                                        )
-
-                                        // dummy
-                                        var sExecutorService: ExecutorService? =
-                                            Executors.newFixedThreadPool(4)
-                                        sExecutorService?.execute(
-                                            Runnable {
-                                                val mDao: NoteDao
-                                                mDao = noteRoomDatabase?.noteDao()!!
-                                                mDao.deleteAllNotes()
-                                                for (i in 0..words.size - 1) {
-                                                    val word = Note(null,
-                                                        "title$i",
-                                                        "content$i",
-                                                        Calendar.getInstance().time
-                                                    )
-                                                    mDao.insert(word)
-                                                }
-                                            }
-                                        )
-                                    }
-                                })
-                                .build()
+                                Constants.DATABASE_NAME
+                            ).build()
                     }
                 }
             }
             return noteRoomDatabase
         }
     }
-
-
 }
 

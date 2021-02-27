@@ -1,14 +1,19 @@
 package com.neo.notes360.ui.auth
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
-import com.google.firebase.auth.FirebaseAuth
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.neo.notes360.R
 import com.neo.notes360.model.ISignInSignUpActivity
+import com.neo.notes360.viewmodel.SignInFragmentViewModel
 
 
 class SignInFragment : Fragment() {
@@ -23,14 +28,12 @@ class SignInFragment : Fragment() {
 
     // var
     private lateinit var listener: ISignInSignUpActivity
-
-    // firebase
-    private lateinit var mAuthStateListener: FirebaseAuth.AuthStateListener   // listens for changes to auth state of user
-    private lateinit var mAuth: FirebaseAuth
+    private val mViewModel by lazy {
+        ViewModelProvider(this)[SignInFragmentViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupFirebaseAuth()
         listener = activity as ISignInSignUpActivity
     }
 
@@ -50,7 +53,8 @@ class SignInFragment : Fragment() {
         resendCode = view.findViewById(R.id.resend_code_tv)
         mProgress = view.findViewById(R.id.signin_progress)
 
-        mAuth = FirebaseAuth.getInstance()
+        showOrHideProgressBar()
+        monitorOnBackPressed()
 
         createAcct.setOnClickListener {
             listener.inflateSignUpFragment()
@@ -65,6 +69,7 @@ class SignInFragment : Fragment() {
         }
 
         btnLogin.setOnClickListener {
+            hideKeyboard(it)
             if (email.text.toString().trim().isNotEmpty() && password.text.toString().trim()
                     .isNotEmpty()
             ) {
@@ -72,7 +77,7 @@ class SignInFragment : Fragment() {
             } else {
                 Toast.makeText(
                     context,
-                    "email and password is need for login, please check",
+                    getString(R.string.ask_for_email_and_password),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -81,53 +86,42 @@ class SignInFragment : Fragment() {
         return view
     }
 
-    private fun signInUser(email: String, password: String) {
-        showProgressBar()
-        mAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-            hideProgressBar()
-        }.addOnFailureListener {
-            Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
-            hideProgressBar()
-        }
+    private fun hideKeyboard(view: View) {
+        val inputMethodManager =
+            activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun setupFirebaseAuth() {
-        mAuthStateListener = object : FirebaseAuth.AuthStateListener {
-            override fun onAuthStateChanged(firebaseAuth: FirebaseAuth) {
-                val user = firebaseAuth.currentUser
-                if (user != null) {
-                    if (user.isEmailVerified) {
-                        Toast.makeText(
-                            context,
-                            "Logged in as: ${user.displayName}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        activity?.onBackPressed()
-                    } else {
-                        Toast.makeText(
-                            context,
-                            "Email is not verified, please check your mail for link or resend code",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        mAuth.signOut()
-                    }
-                } else {
-                    // user is signedOut
-                }
+    private fun showOrHideProgressBar() {
+        mViewModel.mShowProgressBar.observe(viewLifecycleOwner, Observer {
+            if (it == 1) {
+                showProgressBar()
+            } else {
+                hideProgressBar()
+            }
+        })
+    }
+
+    private fun monitorOnBackPressed() {
+        mViewModel.mOnBackPressed.observe(viewLifecycleOwner) {
+            if (it == 1) {
+                activity?.onBackPressed()
             }
         }
     }
 
+    private fun signInUser(email: String, password: String) {
+        mViewModel.signInUser(email, password)
+    }
+
     override fun onStart() {
         super.onStart()
-        mAuth.addAuthStateListener(mAuthStateListener)
+        mViewModel.onStart()
     }
 
     override fun onStop() {
         super.onStop()
-        if (mAuthStateListener != null) {
-            mAuth.removeAuthStateListener(mAuthStateListener)
-        }
+        mViewModel.onStop()
     }
 
     private fun showProgressBar() {

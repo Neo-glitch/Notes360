@@ -21,7 +21,7 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
-        mHandlerThread = HandlerThread("Welcome Activity Thread")
+        mHandlerThread = HandlerThread(getString(R.string.welcome_activity_handler_thread_name))
         mHandlerThread.start()
         Handler(mHandlerThread.looper).postDelayed({startMainActivity()}, 400)
         mWindow.decorView.systemUiVisibility = (

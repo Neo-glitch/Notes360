@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mToolbar: Toolbar
     private lateinit var mNoNoteTv: TextView
     private lateinit var mNoNoteIv: ImageView
-    private lateinit var downloadProgress:ProgressDialog
+    private lateinit var downloadProgress: ProgressDialog
     private lateinit var uploadProgress: ProgressDialog
 
     // firebase
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mNoNoteTv = findViewById(R.id.no_note_tv)
         mNoNoteIv = findViewById(R.id.no_note_iv)
 
-        mViewModel.mAuth.observe(this){
+        mViewModel.mAuth.observe(this) {
             mAuth = it
         }
 
@@ -100,12 +100,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         downloadProgress = ProgressDialog(this)
         mViewModel.mNoteDownloadProgress.observe(this) { progressVisibility ->
             if (progressVisibility == 1) {
-                Log.d(TAG, "initDownloadProgress: 1")
-                downloadProgress.setMessage("Please wait, while note downloads")
+                downloadProgress.setMessage(getString(R.string.download_progressbar_msg))
                 downloadProgress.setCanceledOnTouchOutside(false)
                 downloadProgress.show()
-            } else if(progressVisibility == 0) {
-                Log.d(TAG, "initDownloadProgress: 0")
+                downloadProgress.setOnCancelListener {
+                    mViewModel.stopFirebaseOperation()
+                }
+            } else if (progressVisibility == 0) {
                 downloadProgress.dismiss()
             }
         }
@@ -115,10 +116,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         uploadProgress = ProgressDialog(this)
         mViewModel.mNoteUploadProgress.observe(this) { progressVisibility ->
             if (progressVisibility == 1) {
-                uploadProgress.setMessage("Please wait, while note uploads")
+                uploadProgress.setMessage(getString(R.string.upload_progress_bar_msg))
                 uploadProgress.setCanceledOnTouchOutside(false)
                 uploadProgress.show()
-            } else if(progressVisibility == 0){
+                uploadProgress.setOnCancelListener {
+                    mViewModel.stopFirebaseOperation()
+                }
+            } else if (progressVisibility == 0) {
                 uploadProgress.dismiss()
             }
         }
@@ -128,7 +132,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val navView = mNavigationView.getHeaderView(0)  // 0 since just one header for navView
         val navUserName = navView.findViewById<TextView>(R.id.navUserName)
         val navUserEmail = navView.findViewById<TextView>(R.id.navUserEmail)
-        if(mAuth.currentUser != null){
+        if (mAuth.currentUser != null) {
             navUserName.visibility = View.VISIBLE
             navUserEmail.visibility = View.VISIBLE
 
@@ -158,7 +162,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 mNoNoteIv.visibility = View.GONE
                 mNoNoteTv.visibility = View.GONE
                 adapter.submitList(notes)
-//            mNotesRv.post {mNotesRv.smoothScrollToPosition(0)}    // previous main code to scroll on line
                 mNotesRv.postDelayed(({ mNotesRv.smoothScrollToPosition(0) }), 300)
             }
 
@@ -205,15 +208,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val lastUpdated = Calendar.getInstance().time
 
             if (noteContent?.length!! < 1 || noteTitle?.length!! < 1) {  // no note content and title
-                Toast.makeText(
-                    this,
-                    "Note must have a title and content to be saved",
-                    Toast.LENGTH_SHORT
-                ).show()
+                displayToast("Note must have a title and content to be saved")
             } else {
                 val note = Note(null, noteTitle, noteContent, lastUpdated)
                 mViewModel.insertNote(note)
-                Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
+                displayToast(getString(R.string.note_saved))
             }
         } else if (requestCode == Constants.EDIT_NOTE && resultCode == Activity.RESULT_OK) {
             val noteId = data!!.getIntExtra(Constants.NOTE_ID, -1)
@@ -222,15 +221,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val lastUpdated = Calendar.getInstance().time
 
             if (noteContent?.length!! < 1 || noteTitle?.length!! < 1) {  // no note content and title
-                Toast.makeText(
-                    this,
-                    "Note must have a title and content to be saved",
-                    Toast.LENGTH_SHORT
-                ).show()
+                displayToast("Note must have a title and content to be saved")
             } else {
                 val note = Note(noteId, noteTitle, noteContent, lastUpdated)
                 mViewModel.updateNote(note)
-                Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show()
+                displayToast(getString(R.string.note_saved))
             }
         }
     }
@@ -271,17 +266,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     if (mAuth.currentUser != null) {
                         displayNoteUploadAlert()
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Must be logged in with a verified account to upload notes",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        displayToast("Must be logged in with a verified account to upload notes")
                     }
                 } else {
-                    Toast.makeText(
-                        this, "You need to have a saved note before upload is possible",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    displayToast("You need to have a saved note before upload is possible")
                 }
                 return true
             }
@@ -289,11 +277,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if (mAuth.currentUser != null) {
                     displayNoteDownloadAlert()
                 } else {
-                    Toast.makeText(
-                        this,
-                        "Must be logged in with a verified account to download notes",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    displayToast("Must be logged in with a verified account to download notes")
                 }
                 return true
             }
@@ -311,8 +295,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun displayNoteUploadAlert() {
         val alertDialog = AlertDialog.Builder(this)
-            .setTitle("Are you sure?")
-            .setMessage("Uploading notes to the cloud will overwrite all previous cloud saved notes with the notes saved currently on this device")
+            .setTitle(getString(R.string.are_you_sure))
+            .setMessage(getString(R.string.upload_dialog_message))
             .setPositiveButton(
                 "Upload"
             ) { dialogInterface, i ->
@@ -324,10 +308,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         alertDialog.show()
     }
 
+    private fun displayToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
     private fun displayNoteDownloadAlert() {
         val alertDialog = AlertDialog.Builder(this)
-            .setTitle("Are you sure?")
-            .setMessage("Downloading notes from the cloud will overwrite notes saved currently on this device with notes downloaded from the cloud")
+            .setTitle(getString(R.string.are_you_sure))
+            .setMessage(getString(R.string.download_dialog_message))
             .setPositiveButton(
                 "Download"
             ) { dialogInterface, i ->
@@ -342,7 +330,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             mDrawerLayout.closeDrawer(GravityCompat.START)
-        } else {
+        } else if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             super.onBackPressed()
         }
     }

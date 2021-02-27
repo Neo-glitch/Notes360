@@ -106,7 +106,6 @@ public class NoteRvAdapter extends PagedListAdapter<Note, NoteRvAdapter.NoteView
                     editIntent.putExtra(Constants.NOTE_ID, noteId);
                     editIntent.putExtra(Constants.NOTE_TITLE, noteTitle.getText().toString());
                     editIntent.putExtra(Constants.NOTE_CONTENT, noteContent.getText().toString());
-//                    editIntent.putExtra(Constants.NOTE_TYPE, Constants.EDIT_NOTE);
                     ((AppCompatActivity) mContext).startActivityForResult(editIntent, Constants.EDIT_NOTE);
                     ((AppCompatActivity)mContext).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                     return true;

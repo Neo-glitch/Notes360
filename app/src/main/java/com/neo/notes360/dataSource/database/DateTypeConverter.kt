@@ -11,7 +11,6 @@ class DateTypeConverter {
         return Date(value)
     }
 
-
     // takes date value and ret longs, for saving in db
     @TypeConverter
     fun toLong(value: Date): Long{
