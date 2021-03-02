@@ -2,6 +2,7 @@ package com.neo.notes360.repository
 
 import android.app.Application
 import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
@@ -39,6 +40,7 @@ class noteRepository(application: Application) {
     val mNoteUploadProgress: MutableLiveData<Int> = MutableLiveData()
     val mNoteDownloadProgress: MutableLiveData<Int> = MutableLiveData()
     private var mCancelFirebaseOperation: Boolean
+    private var mHandlerThread: HandlerThread
 
 
     init {
@@ -52,6 +54,9 @@ class noteRepository(application: Application) {
         mNoteUploadProgress.value = 0
         mNoteDownloadProgress.value = 0
         mCancelFirebaseOperation = false
+
+        mHandlerThread = HandlerThread("download and insert note handler thread")
+        mHandlerThread.start()
     }
 
     /*
@@ -111,7 +116,7 @@ class noteRepository(application: Application) {
                             if (!mCancelFirebaseOperation) {
                                 clearFirebaseDbForNewStart(noteIdList, notesBackupList)
                             } else {
-                                displayToast("Note cancelled successfully")
+                                displayToast("Note upload cancelled successfully")
                             }
                         } else {
                             if (!mCancelFirebaseOperation) {
@@ -120,7 +125,7 @@ class noteRepository(application: Application) {
                                     notesBackupList
                                 )
                             } else {
-                                displayToast("Note cancelled successfully")
+                                displayToast("Note upload cancelled successfully")
                             }
                         }
                     } else {
@@ -199,7 +204,7 @@ class noteRepository(application: Application) {
 
     private fun getAndPutPreviousCloudNotes(notesBackupList: MutableList<Note>) {
         mNoteUploadProgress.value = 0
-        displayToast("Note Upload cancelling, please wait")
+        displayToast("Note Upload cancelling, please wait...")
         firebasedb = FirebaseFirestore.getInstance()
         var toDeleteNoteIdList = mutableListOf<String>()
 
@@ -274,9 +279,14 @@ class noteRepository(application: Application) {
                             }
                             deleteAllNotes()
                             for (note in notesList) {
-                                Handler().postDelayed(
-                                    { insert(note) }, 80
-                                )
+                                // n.b: This if else block could have been could have been managed better, well later on will do that
+                                if(!mCancelFirebaseOperation){
+                                    Handler(mHandlerThread.looper).postDelayed(
+                                        { insert(note) }, 80
+                                    )
+                                } else{
+                                    mHandlerThread.quitSafely()
+                                }
                             }
                             mNoteDownloadProgress.value = 0
                             displayToast("Notes downloaded successfully")
