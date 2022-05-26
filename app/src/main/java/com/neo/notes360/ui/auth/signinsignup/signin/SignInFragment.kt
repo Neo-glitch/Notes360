@@ -1,4 +1,4 @@
-package com.neo.notes360.ui.auth
+package com.neo.notes360.ui.auth.signinsignup.signin
 
 import android.content.Context
 import android.os.Bundle
@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.neo.notes360.R
 import com.neo.notes360.model.ISignInSignUpActivity
-import com.neo.notes360.viewmodel.SignInFragmentViewModel
 
 
 class SignInFragment : Fragment() {
@@ -29,7 +28,7 @@ class SignInFragment : Fragment() {
     // var
     private lateinit var listener: ISignInSignUpActivity
     private val mViewModel by lazy {
-        ViewModelProvider(this)[SignInFragmentViewModel::class.java]
+        ViewModelProvider(this)[SignInViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

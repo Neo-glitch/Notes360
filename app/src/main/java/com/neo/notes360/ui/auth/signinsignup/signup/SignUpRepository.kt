@@ -1,4 +1,4 @@
-package com.neo.notes360.repository
+package com.neo.notes360.ui.auth.signinsignup.signup
 
 import android.app.Application
 import android.widget.Toast

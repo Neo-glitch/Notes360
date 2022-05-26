@@ -17,10 +17,10 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.neo.notes360.Constants;
-import com.neo.notes360.ui.NoteDetailsActivity;
+import com.neo.notes360.ui.notedetail.NoteDetailsActivity;
 import com.neo.notes360.R;
 import com.neo.notes360.dataSource.database.Note;
-import com.neo.notes360.ui.AddEditActivity;
+import com.neo.notes360.ui.addedit.AddEditActivity;
 
 import java.util.Objects;
 

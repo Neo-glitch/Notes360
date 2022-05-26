@@ -1,4 +1,4 @@
-package com.neo.notes360.ui
+package com.neo.notes360.ui.notedetail
 
 import android.app.Activity
 import android.content.Intent
@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.neo.notes360.Constants
 import com.neo.notes360.R
 import com.neo.notes360.dataSource.database.Note
-import com.neo.notes360.viewmodel.NoteDetailsActivityViewModel
+import com.neo.notes360.ui.addedit.AddEditActivity
 import kotlinx.android.synthetic.main.activity_note_details.*
 import java.util.*
 

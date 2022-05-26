@@ -1,4 +1,4 @@
-package com.neo.notes360.ui
+package com.neo.notes360.ui.addedit
 
 import android.app.Activity
 import android.content.Intent

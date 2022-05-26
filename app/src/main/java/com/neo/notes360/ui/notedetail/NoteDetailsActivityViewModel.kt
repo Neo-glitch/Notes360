@@ -1,10 +1,10 @@
-package com.neo.notes360.viewmodel
+package com.neo.notes360.ui.notedetail
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.neo.notes360.dataSource.database.Note
-import com.neo.notes360.repository.noteRepository
+import com.neo.notes360.ui.noteRepository
 
 class NoteDetailsActivityViewModel(application: Application) : AndroidViewModel(application) {
     var noteTitle: MutableLiveData<String> = MutableLiveData()

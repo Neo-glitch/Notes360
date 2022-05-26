@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -29,8 +28,8 @@ import com.neo.notes360.R
 import com.neo.notes360.dataSource.database.Note
 import com.neo.notes360.model.Idelete
 import com.neo.notes360.model.NoteRvAdapter
-import com.neo.notes360.ui.auth.SignInSignUpActivity
-import com.neo.notes360.viewmodel.MainActivityViewModel
+import com.neo.notes360.ui.addedit.AddEditActivity
+import com.neo.notes360.ui.auth.signinsignup.SignInSignUpActivity
 import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, Idelete {
@@ -58,8 +57,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         findViewById<FloatingActionButton>(R.id.addNoteFab)
     }
 
-    private val mViewModel: MainActivityViewModel by lazy {
-        ViewModelProvider(this)[MainActivityViewModel::class.java]
+    private val mViewModel: MainViewModel by lazy {
+        ViewModelProvider(this)[MainViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

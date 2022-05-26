@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:colorControlActivated">@color/black</item>
     </style>
 
     <style name="Theme.Notes360.NoActionBar">

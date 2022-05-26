@@ -1,10 +1,14 @@
-package com.neo.notes360.ui.auth
+package com.neo.notes360.ui.auth.signinsignup
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
 import com.neo.notes360.R
 import com.neo.notes360.model.ISignInSignUpActivity
+import com.neo.notes360.ui.auth.passwordreset.PasswordResetFragment
+import com.neo.notes360.ui.auth.resendverification.ResendVerificationFragment
+import com.neo.notes360.ui.auth.signinsignup.signin.SignInFragment
+import com.neo.notes360.ui.auth.signinsignup.signup.SignUpFragment
 
 class SignInSignUpActivity : AppCompatActivity(), ISignInSignUpActivity {
     private val manager: FragmentManager by lazy {

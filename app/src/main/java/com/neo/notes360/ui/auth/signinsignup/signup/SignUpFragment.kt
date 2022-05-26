@@ -1,4 +1,4 @@
-package com.neo.notes360.ui.auth
+package com.neo.notes360.ui.auth.signinsignup.signup
 
 import android.content.Context
 import android.os.Bundle
@@ -13,10 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.neo.notes360.R
-import com.neo.notes360.viewmodel.SignUpFragmentViewModel
 
 
 class SignUpFragment : Fragment() {
@@ -27,7 +24,7 @@ class SignUpFragment : Fragment() {
     private lateinit var btnSignUp: Button
     private lateinit var mProgress: ProgressBar
     private val mSignUpViewModel by lazy{
-        ViewModelProvider(this)[SignUpFragmentViewModel::class.java]
+        ViewModelProvider(this)[SignUpViewModel::class.java]
     }
 
     override fun onCreateView(

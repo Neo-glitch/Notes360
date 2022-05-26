@@ -1,17 +1,14 @@
-package com.neo.notes360.repository
+package com.neo.notes360.ui
 
 import android.app.Application
 import android.os.Handler
 import android.os.HandlerThread
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.neo.notes360.Constants

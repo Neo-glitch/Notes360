@@ -1,4 +1,4 @@
-package com.neo.notes360.viewmodel
+package com.neo.notes360.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -7,9 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import com.google.firebase.auth.FirebaseAuth
 import com.neo.notes360.dataSource.database.Note
-import com.neo.notes360.repository.noteRepository
 
-class MainActivityViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val allNotes: LiveData<PagedList<Note>>
     private val noteRepository = noteRepository(application)
     val mAuth: MutableLiveData<FirebaseAuth> = MutableLiveData()

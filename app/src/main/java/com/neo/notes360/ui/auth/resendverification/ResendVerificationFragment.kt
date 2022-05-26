@@ -1,4 +1,4 @@
-package com.neo.notes360.ui.auth
+package com.neo.notes360.ui.auth.resendverification
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.neo.notes360.R
-import com.neo.notes360.viewmodel.ResendVerificationViewModel
+import com.neo.notes360.ui.auth.signinsignup.SignInSignUpActivity
 
 
 class ResendVerificationFragment : Fragment() {
